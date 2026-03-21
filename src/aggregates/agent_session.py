@@ -29,6 +29,14 @@ class AgentSessionAggregate:
             handler(event)
         self.version = event.stream_position
 
+    def expected_version_for_append(self) -> int:
+        """Next append must use this value for optimistic concurrency (-1 = new stream)."""
+        return -1 if self.version == 0 else self.version
+
+    def assert_new_session(self) -> None:
+        if self.version != 0:
+            raise DomainError("Agent session stream already exists")
+
     def assert_context_loaded(self) -> None:
         if not self.context_loaded:
             raise DomainError("Agent session has no AgentContextLoaded event")
@@ -38,6 +46,8 @@ class AgentSessionAggregate:
             raise DomainError(f"Model version mismatch: expected {self.model_version}, got {model_version}")
 
     def _on_AgentContextLoaded(self, event: StoredEvent) -> None:
+        if self.context_loaded:
+            raise DomainError("Invalid transition on AgentContextLoaded: context already loaded for this session")
         self.context_loaded = True
         self.model_version = event.payload.get("model_version")
 
