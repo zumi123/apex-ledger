@@ -328,6 +328,8 @@ class AgentNodeExecuted(BaseEvent):
     llm_tokens_output: int | None = None
     llm_cost_usd: float | None = None
     duration_ms: int
+    # Gas Town recovery: OK | PENDING | ERROR — PENDING/ERROR must appear verbatim in reconstructed context.
+    execution_status: str = Field(default="OK")
 
 
 class AgentToolCalled(BaseEvent):
