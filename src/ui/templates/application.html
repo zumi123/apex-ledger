@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>{{ app_id }} — The Ledger UI</title>
+    <style>
+      body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 24px; }
+      a { color: #1f6feb; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+      .card { border: 1px solid #eee; border-radius: 12px; padding: 14px; }
+      .card h3 { margin: 0 0 10px; }
+      pre { background: #0b1020; color: #e6edf3; padding: 12px; border-radius: 12px; overflow: auto; }
+      .row { display:flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+      input, select { padding: 8px; border: 1px solid #ddd; border-radius: 8px; }
+      button { padding: 9px 12px; border: 1px solid #ddd; border-radius: 10px; background: #fff; cursor: pointer; }
+      button.primary { background: #1f6feb; color: #fff; border-color: #1f6feb; }
+      .muted { color: #666; font-size: 12px; }
+      .pill { display:inline-block; padding: 4px 10px; border-radius: 999px; background:#f6f8fa; border:1px solid #eee; font-size:12px; }
+    </style>
+  </head>
+  <body>
+    <div class="row" style="justify-content: space-between;">
+      <div class="row">
+        <a href="/">← Applications</a>
+        <h2 style="margin:0;">{{ app_id }}</h2>
+        <span class="pill">{{ state }}</span>
+      </div>
+      <form method="post" action="/applications/{{ app_id }}/projections/run">
+        <button type="submit">Run projections</button>
+      </form>
+    </div>
+
+    <div class="grid" style="margin-top: 18px;">
+      <div class="card">
+        <h3>Summary</h3>
+        <pre>{{ summary_json }}</pre>
+      </div>
+      <div class="card">
+        <h3>Integrity</h3>
+        <div class="muted">Audit chain check (writes an audit event each run)</div>
+        <pre>{{ integrity_json }}</pre>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top: 18px;">
+      <div class="card">
+        <h3>Human review</h3>
+        <form method="post" action="/applications/{{ app_id }}/review">
+          <div class="row">
+            <input name="reviewer_id" placeholder="reviewer id" value="loan-officer-1" />
+            <select name="final_decision">
+              <option value="APPROVE">APPROVE</option>
+              <option value="DECLINE">DECLINE</option>
+              <option value="REFER">REFER</option>
+            </select>
+            <button class="primary" type="submit">Record review</button>
+          </div>
+          <div class="row" style="margin-top: 10px;">
+            <label class="muted"><input type="checkbox" name="override" /> override</label>
+            <input style="flex:1;" name="override_reason" placeholder="override reason (optional)" />
+          </div>
+        </form>
+      </div>
+      <div class="card">
+        <h3>Compliance</h3>
+        <pre>{{ compliance_json }}</pre>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 18px;">
+      <h3>Audit trail (loan stream)</h3>
+      <pre>{{ audit_json }}</pre>
+    </div>
+  </body>
+</html>
+
