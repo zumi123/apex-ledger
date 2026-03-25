@@ -10,9 +10,11 @@ from psycopg.types.json import Jsonb
 from src.models.events import StoredEvent
 from src.projections.base import Projection
 
+COMPLIANCE_AUDIT_PROJECTION_NAME = "ComplianceAuditView"
+
 
 class ComplianceAuditViewProjection(Projection):
-    name = "ComplianceAuditView"
+    name = COMPLIANCE_AUDIT_PROJECTION_NAME
     subscribed_event_types = {
         "ComplianceCheckRequested",
         "ComplianceRulePassed",
